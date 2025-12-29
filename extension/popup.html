@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Upwork Bid Checker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <h2>Upwork Bid Checker</h2>
+
+    <div class="input-group">
+      <label for="addedBy">Your Name:</label>
+      <input type="text" id="addedBy" placeholder="e.g. Alice" />
+    </div>
+
+    <div class="info">
+      <p><strong>Page:</strong> <span id="pageTitle">Loading...</span></p>
+      <p class="url-preview" id="pageUrl">...</p>
+    </div>
+
+    <button id="saveBtn">Save URL</button>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>
