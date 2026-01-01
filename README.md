@@ -55,7 +55,7 @@ When multiple team members are scouting for jobs on Upwork, it's easy to lose tr
 - **Service Worker**: Implemented background service workers for robust API handling.
 
 ### **v1.0 - Initial Release**
-- **Core Detection**: Basic job status injection on Upwork job pages.
+- **Core Detection**: Basic job status injection on Upwork job pages and using Google Sheets and App Script as backend.
 - **Claim System**: Simple "Claim" and "Taken" status toggles.
 
 ## �👨‍💻 Developed By
