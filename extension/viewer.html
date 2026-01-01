@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+    Upwork Bid Checker - Viewer Page
+    
+    PURPOSE:
+    This HTML file defines the structure of the "Recent Bids" page.
+    It uses a clean, modern "Card" UI design to display the list of bids.
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recent Bids</title>
+    <style>
+        /* 
+           GLOBAL STYLES 
+           Using 'Inter' or system fonts for a clean, modern look.
+        */
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            background-color: #f8f9fa;
+            /* Light grey background for a professional feel */
+            color: #333;
+        }
+
+        h2 {
+            text-align: left;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* 
+           CARD CONTAINER 
+           Wraps the table to give it a "Card" look with shadow and rounded corners.
+        */
+        .card {
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            /* Space for the Load More button */
+        }
+
+        /* TABLE STYLES */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #4a5568;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+            /* Remove border from last row */
+        }
+
+        tr:hover {
+            background-color: #f7fafc;
+            /* Subtle hover effect */
+        }
+
+        /* LOADING STATE */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: #718096;
+        }
+
+        /* JOB ID COLUMN */
+        .job-id {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        /* TITLE COLUMN */
+        .title-col {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.875rem;
+        }
+
+        .title-col a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .title-col a:hover {
+            color: #3182ce;
+            /* Link color on hover */
+            text-decoration: underline;
+        }
+
+        /* BUTTON STYLES */
+        .refresh-btn {
+            padding: 10px 20px;
+            background-color: #3182ce;
+            /* Blue */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .refresh-btn-header {
+            float: right;
+            margin-top: -50px;
+            /* Align with title */
+        }
+
+        .refresh-btn:hover {
+            background-color: #2c5282;
+            /* Darker Blue */
+        }
+
+        .refresh-btn:disabled {
+            background-color: #cbd5e0;
+            /* Grey */
+            cursor: not-allowed;
+            color: #718096;
+        }
+
+        .load-more-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* 
+           BADGE STYLES
+           Used in the "Added By" column to give each team member a distinct color.
+           Colors are dynamically calculated in viewer.js.
+        */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            /* This creates the modern "pill" shape */
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            white-space: nowrap;
+        }
+
+        /* DELETE BUTTON STYLES */
+        .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            background-color: #fed7d7;
+        }
+
+        .delete-btn svg {
+            width: 18px;
+            height: 18px;
+            color: #e53e3e;
+        }
+
+        .delete-col {
+            width: 50px;
+            text-align: center;
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+
+        .modal-subtitle {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .modal-job-title {
+            font-size: 0.95rem;
+            color: #e53e3e;
+            font-weight: 500;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: #fff5f5;
+            border-radius: 8px;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #e53e3e;
+        }
+
+        .modal-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-cancel {
+            background-color: #e2e8f0;
+            border: none;
+            color: #4a5568;
+        }
+
+        .modal-btn-cancel:hover {
+            background-color: #cbd5e0;
+        }
+
+        .modal-btn-delete {
+            background-color: #e53e3e;
+            border: none;
+            color: white;
+        }
+
+        .modal-btn-delete:hover {
+            background-color: #c53030;
+        }
+
+        .modal-btn-delete:disabled {
+            background-color: #feb2b2;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Recent Bids</h2>
+    <!-- Refresh Button (Top Right) -->
+    <button id="refreshBtn" class="refresh-btn refresh-btn-header">Refresh Data</button>
+
+    <!-- Main Card Container -->
+    <div class="card">
+        <table id="bidsTable">
+            <thead>
+                <tr>
+                    <th class="delete-col"></th>
+                    <th>Added By</th>
+                    <th>Time Added</th>
+                    <th>Job ID</th>
+                    <th>Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be inserted here by viewer.js -->
+            </tbody>
+        </table>
+
+        <!-- Load More Button (Bottom Center) -->
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="refresh-btn" style="display: none;">Load 10 More</button>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading">Loading data...</div>
+
+    <!-- 
+         DELETE CONFIRMATION MODAL 
+         This modal is hidden by default and only shown when a user clicks the trash icon.
+         It acts as a safety barrier to prevent accidental deletions.
+    -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">Delete Bid Entry</div>
+            <div class="modal-subtitle">You are about to delete:</div>
+            <div id="modalJobTitle" class="modal-job-title"></div>
+
+            <!-- Require the user to type "delete" to enable the button -->
+            <div class="modal-subtitle">Type <strong>"delete"</strong> to confirm:</div>
+            <input type="text" id="deleteConfirmInput" class="modal-input" placeholder="Type 'delete' here...">
+
+            <div class="modal-buttons">
+                <button id="modalCancelBtn" class="modal-btn modal-btn-cancel">Cancel</button>
+                <button id="modalDeleteBtn" class="modal-btn modal-btn-delete" disabled>Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="viewer.js"></script>
+</body>
+
+</html>
