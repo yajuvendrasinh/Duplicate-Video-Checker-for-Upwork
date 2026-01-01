@@ -37,5 +37,26 @@ When multiple team members are scouting for jobs on Upwork, it's easy to lose tr
   - `config.js`: Centralized Firebase configuration.
   - `manifest.json`: Extension permissions (identity, host permissions, etc.).
 
-## 👨‍💻 Developed By
+## � Version History
+
+### **v3.5 - Layout Improvements (Current)**
+- **Modern Card Layout**: Replaced the table view with a responsive, grid-based card layout for better readability.
+- **UI Polish**: Enhanced visual hierarchy, spacing, and typography across the dashboard.
+- **Refined Badges**: Improved user color badges for quicker team member identification.
+
+### **v3.0 - Security & Identity**
+- **Detailed Identity Tracking**: Captures and displays the Google User ID of the person who claimed the job.
+- **Secure Deletion**: Added a confirmation modal demanding the user type "delete" to remove a bid, preventing accidental data loss.
+- **Permission Controls**: Restricted deletion rights to the original owner of the bid.
+
+### **v2.0 - Firebase Migration**
+- **Real-Time Database**: Migrated the backend to Google Firebase Firestore for instant data syncing.
+- **Cloud Stability**: Replaced the legacy GAS backend for better reliability and uptime.
+- **Service Worker**: Implemented background service workers for robust API handling.
+
+### **v1.0 - Initial Release**
+- **Core Detection**: Basic job status injection on Upwork job pages.
+- **Claim System**: Simple "Claim" and "Taken" status toggles.
+
+## �👨‍💻 Developed By
 [Yajuvendrasinh Gida](https://github.com/yajuvendrasinh)
